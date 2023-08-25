@@ -17,11 +17,15 @@ Follow these steps to set up and run the project:
    ```bash
    git clone https://github.com/M-Bilal-Haider/payment-gateway.git
    ```
+
 2. Navigate to the project directory:
     ```
     cd payment-gateway
     ```
-3. Install dependencies using npm:
+
+3. Place .env file at root of directory
+
+4. Install dependencies using npm:
     ```
     npm install dotenv ejs express node-fetch
     ```
