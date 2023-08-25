@@ -1,33 +1,33 @@
-
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 
 // set some important variables
 const { CLIENT_ID, APP_SECRET } = process.env;
-const base = 'https://api-m.sandbox.paypal.com';
+const base = "https://api-m.sandbox.paypal.com";
 
 // call the create order method
 export async function createOrder() {
-  const purchaseAmount = '100.00'; // TODO: pull prices from a database
+  const purchaseAmount = "100.00"; // TODO: pull prices from a database
   const accessToken = await generateAccessToken();
   const url = `${base}/v2/checkout/orders`;
   const response = await fetch(url, {
-    method: 'post',
+    method: "post",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      intent: 'CAPTURE',
+      intent: "CAPTURE",
       purchase_units: [
         {
           amount: {
-            currency_code: 'USD',
+            currency_code: "USD",
             value: purchaseAmount,
           },
         },
       ],
     }),
-  })
+  });
+
   return handleResponse(response);
 }
 
@@ -35,47 +35,27 @@ export async function createOrder() {
 export async function capturePayment(orderId) {
   const accessToken = await generateAccessToken();
   const url = `${base}/v2/checkout/orders/${orderId}/capture`;
-
-
-
-  const paymentData = {
-  
-      payment_source: 
-        {
-          card: {
-            name: "Bilal Haider",
-            number: "4032039554343311",
-            type: 'VISA', // Change to the card type you want to use
-            expiration_month: "07",
-            expiration_year: "2026",
-            security_code: "494"
-          }
-        }
-      
-  };
-  
   const response = await fetch(url, {
-    method: 'post',
+    method: "post",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
-  })
+  });
 
-  console.log(response)
   return handleResponse(response);
 }
 
 // generate access token
 export async function generateAccessToken() {
-  const auth = Buffer.from(CLIENT_ID + ':' + APP_SECRET).toString('base64');
+  const auth = Buffer.from(CLIENT_ID + ":" + APP_SECRET).toString("base64");
   const response = await fetch(`${base}/v1/oauth2/token`, {
-    method: 'post',
-    body: 'grant_type=client_credentials',
+    method: "post",
+    body: "grant_type=client_credentials",
     headers: {
       Authorization: `Basic ${auth}`,
     },
-  })
+  });
   const jsonData = await handleResponse(response);
   return jsonData.access_token;
 }
@@ -84,14 +64,14 @@ export async function generateAccessToken() {
 export async function generateClientToken() {
   const accessToken = await generateAccessToken();
   const response = await fetch(`${base}/v1/identity/generate-token`, {
-    method: 'post',
+    method: "post",
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'Accept-Language': 'en_US',
-      'Content-Type': 'application/json',
+      "Accept-Language": "en_US",
+      "Content-Type": "application/json",
     },
-  })
-  console.log('response', response.status);
+  });
+  console.log('response', response.status)
   const jsonData = await handleResponse(response);
   return jsonData.client_token;
 }
@@ -100,7 +80,7 @@ async function handleResponse(response) {
   if (response.status === 200 || response.status === 201) {
     return response.json();
   }
+
   const errorMessage = await response.text();
   throw new Error(errorMessage);
 }
-    

@@ -1,8 +1,6 @@
-
 import "dotenv/config";
 import express from "express";
-import * as PayPal from "./services/paypal.js";
-const { PORT = 8888 } = process.env;
+import * as paypal from "./paypal-api.js";
 
 const app = express();
 app.set("view engine", "ejs");
@@ -12,47 +10,36 @@ app.use(express.static("public"));
 app.get("/", async (req, res) => {
   const clientId = process.env.CLIENT_ID;
   try {
-    const clientToken = await PayPal.generateClientToken();
-    res.render("index")
+    const clientToken = await paypal.generateClientToken();
+    res.render("checkout", { clientId, clientToken });
   } catch (err) {
     res.status(500).send(err.message);
   }
-})
+});
 
 // create order
-app.get("/api/orders", async (req, res) => {
+app.post("/api/orders", async (req, res) => {
   try {
-    const order = await PayPal.createOrder();
-    res.json(order);
+    const postData = req.body; 
+  const amount = postData.amount;
 
-    console.log(order)
+    // const order = await paypal.createOrder();
+    // res.json(order);
+    console.log("amount"+amount)
   } catch (err) {
-
     res.status(500).send(err.message);
   }
-})
+});
 
 // capture payment
-app.get("/api/orders/:orderID/capture", async (req, res) => {
-  const { orderID } = req.params; 
+app.post("/api/orders/:orderID/capture", async (req, res) => {
+  const { orderID } = req.params;
   try {
-    const captureData = await PayPal.capturePayment(orderID);
+    const captureData = await paypal.capturePayment(orderID);
     res.json(captureData);
   } catch (err) {
     res.status(500).send(err.message);
   }
-})
-
-
-// Route for form submission
-app.post('/submit', (req, res) => {
-  const formData = req.body;
-  console.log(formData); // You can process the form data here
-  res.send('Form submitted successfully!');
 });
 
-
-app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}/`);
-})
-    
+app.listen(8888);

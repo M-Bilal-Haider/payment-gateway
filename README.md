@@ -23,7 +23,7 @@ Follow these steps to set up and run the project:
     ```
 3. Install dependencies using npm:
     ```
-    npm install
+    npm install dotenv ejs express node-fetch
     ```
 
 ### Configuration
