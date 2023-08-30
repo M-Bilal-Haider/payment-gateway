@@ -8,14 +8,15 @@ if (paypal.HostedFields.isEligible()) {
   paypal.HostedFields.render({
     // Call your server to set up the transaction
     createOrder: () => {
+      const amount = document.getElementById("order-amount").value;
       return fetch("/api/orders", {
         method: "post",
-        body: JSON.stringify({"amount":"55"}),
-        // use the "body" param to optionally pass additional order information like
-        // product ids or amount.
+        body: JSON.stringify({ "amount": amount }), 
+        
       })
         .then((res) => res.json())
         .then((orderData) => {
+          console.log("orderid "+orderId)
           orderId = orderData.id; // needed later to complete capture
           return orderData.id;
         });
@@ -29,6 +30,7 @@ if (paypal.HostedFields.isEligible()) {
       },
     },
     fields: {
+      
       number: {
         selector: "#card-number",
         placeholder: "4111 1111 1111 1111",
@@ -98,6 +100,7 @@ if (paypal.HostedFields.isEligible()) {
             });
         })
         .catch((err) => {
+          console.log(err)
           alert("Payment could not be captured! " + JSON.stringify(err));
         });
     });

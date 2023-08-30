@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Braintree Payment</title>
+  <script src="https://js.braintreegateway.com/web/dropin/1.31.2/js/dropin.min.js"></script>
+</head>
+<body>
+  <h1>Braintree Payment</h1>
+
+  <!-- Create a container for Drop-in UI -->
+  <div id="dropin-container"></div>
+
+  <!-- Add a form to input the payment amount -->
+  <form id="payment-form">
+    <label for="amount">Payment Amount:</label>
+    <input type="number" id="amount" name="amount" step="0.01" required>
+    <button type="submit">Pay</button>
+  </form>
+
+  <script>
+    // Fetch client token from the server
+    fetch('/braintree_client_token')
+      .then(response => response.text())
+      .then(clientToken => {
+        braintree.dropin.create({
+          authorization: clientToken,
+          container: '#dropin-container'
+        }, (error, dropinInstance) => {
+          if (error) {
+            console.error('Error creating Drop-in instance:', error);
+            return;
+          }
+
+          // Handle form submission
+          const form = document.getElementById('payment-form');
+          form.addEventListener('submit', event => {
+            event.preventDefault();
+
+            dropinInstance.requestPaymentMethod((err, payload) => {
+              if (err) {
+                console.error('Error requesting payment method:', err);
+                alert('There was an error processing your payment. Please try again.');
+                return;
+              }
+
+
+              nonce  = payload.nonce;
+              
+
+              const amountValue = document.getElementById('amount').value;
+
+              // Send payment method nonce and amount to the server
+              fetch('/braintree_checkout', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  paymentMethodNonce: payload.nonce, // Replace with actual nonce
+                  amount: amountValue // Replace with actual amount value
+                })
+              })
+              .then(response => response.json())
+              .then(result => {
+                if (result.success) {
+                  alert('Payment successful!');
+                } else {
+                  alert('Payment failed: ' + result.message);
+                }
+              })
+              .catch(error => {
+                console.error('Error processing payment:', error);
+              });
+            });
+          });
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching client token:', error);
+      });
+  </script>
+</body>
+</html>

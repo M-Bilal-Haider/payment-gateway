@@ -27,7 +27,7 @@ Follow these steps to set up and run the project:
 
 4. Install dependencies using npm:
     ```
-    npm install dotenv ejs express node-fetch
+    npm install dotenv ejs express node-fetch braintree
     ```
 
 ### Configuration
@@ -38,11 +38,16 @@ Add your PayPal API credentials to the .env file:
 
 
 ```
-CLIENT_ID="your_paypal_client_id"
-APP_SECRET="your_paypal_app_secret"
+PAYPAL_CLIENT_ID="your_paypal_client_id"
+PAYPAL_APP_SECRET="your_paypal_app_secret"
+
+
+BRAINTREE_MERCHANT_ID= "your_braintree_merchant_id",
+BRAINTREE_PUBLIC_KEY= "your_braintree_public_key",
+BRAINTREE_PRIVATE_KEY= "your_braintree_private_key"
 ```
 
-Replace your_paypal_client_id and your_paypal_app_secret with your actual PayPal API credentials.
+Replace values with actual keys from paypal and braintree.
 
 ### Run the Project
 
@@ -51,3 +56,16 @@ Start the project by running:
 ```
 node app.js
 ```
+
+
+### Usage
+Dummy braintree credit card can be taken from 
+https://developer.paypal.com/braintree/docs/reference/general/testing/node
+
+
+Dummy Paypal credit card is:<br />
+
+<b>Visa</b> <br />
+Card number: 4032036662035094<br />
+Expiry date: 03/2028<br />
+CVC code: 998<br />
