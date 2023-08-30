@@ -27,7 +27,7 @@ Follow these steps to set up and run the project:
 
 4. Install dependencies using npm:
     ```
-    npm install dotenv ejs express node-fetch braintree
+    npm install dotenv ejs express node-fetch braintree mocha chai sinon sinon-chai
     ```
 
 ### Configuration
@@ -54,7 +54,7 @@ Replace values with actual keys from paypal and braintree.
 Start the project by running:
 
 ```
-node app.js
+node server.js
 ```
 
 
@@ -69,3 +69,10 @@ Dummy Paypal credit card is:<br />
 Card number: 4032036662035094<br />
 Expiry date: 03/2028<br />
 CVC code: 998<br />
+
+
+### Testing
+run following command to run test cases
+```
+npx mocha test.js
+```
